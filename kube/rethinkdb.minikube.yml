@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rethinkdb
+  name: rethinkdb
+spec:
+  ports:
+    - port: 8080
+      targetPort: admin-port
+      name: admin-port
+    - port: 28015
+      targetPort: driver-port
+      name: driver-port
+    - port: 29015
+      targetPort: cluster-port
+      name: cluster-port
+  selector:
+    app: rethinkdb
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rethinkdb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rethinkdb
+    spec:
+      containers:
+      - image: rosskukulinski/rethinkdb-kubernetes:2.3.1
+        imagePullPolicy: Always
+        name: rethinkdb
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        ports:
+        - containerPort: 8080
+          name: admin-port
+        - containerPort: 28015
+          name: driver-port
+        - containerPort: 29015
+          name: cluster-port
+        volumeMounts:
+        - mountPath: /data/rethinkdb_data
+          name: rethinkdb-storage
+      volumes:
+      - name: rethinkdb-storage
+        emptyDir: {}
