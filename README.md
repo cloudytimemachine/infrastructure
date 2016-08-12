@@ -22,7 +22,13 @@ make pull
 Request access to our Google Account to access secrets (contact Ross).  Once you have access:
 
 ```
-make sync-secrets
+make pull-secrets
+```
+
+Push changes to secrets
+
+```
+make push-secrets
 ```
 
 Startup minikube

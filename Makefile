@@ -4,8 +4,14 @@ pull:
 pull-ro:
 	support/sync_repos.js pull-ro
 
-sync-secrets:
+make-secrets-dir:
+	mkdir -p secrets
+
+push-secrets: make-secrets-dir
 	gsutil -m rsync -d -r secrets gs://ctm-secrets/infrastructure
+
+pull-secrets: make-secrets-dir
+	gsutil -m rsync -d -r gs://ctm-secrets/infrastructure secrets
 
 minikube:
 	@minikube version
